@@ -9,7 +9,6 @@ shots = scores.map do |s|
              s.to_i
            end
           end
-p shots
 points = 0
 number_of_frame = 0
 second_pitch_skip = false
