@@ -17,8 +17,8 @@ opt.parse!(ARGV)
 day = Date.today
 
 # params 内にキーがある場合はキーの値、ない場合は今年 or 今月の値
-year  = params[:year] ? params[:year] : day.year
-month = params[:month] ? params[:month] : day.month
+year  = params[:year] || day.year
+month = params[:month] || day.month
 
 # 設定月１日を取得
 first_day_of_month = Date.new(year.to_i, month.to_i, 1)
@@ -41,11 +41,7 @@ end
 # number_of_days の日数だけ繰り返し
 (first_day_of_month...first_day_of_next_month).each do |count_day|
 
-  if count_day === day
-    day_color = "\e[30m\e[47m"
-  else
-    day_color = "\e[37m\e[40m"
-  end
+  day_color =  count_day === day ? "\e[30m\e[47m" : "\e[37m\e[40m"
 
   print "#{day_color}#{count_day.mday.to_s.rjust(3)}"
 
