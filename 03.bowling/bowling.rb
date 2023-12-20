@@ -1,12 +1,11 @@
-NUMBER_OF_PINS_STRIKE = 10
-NUMBER_OF_PINS_SPARE = 10
+TOTAL_PINS = 10
 FINAL_FRAME = 9
 
 score = ARGV[0]
 scores = score.split(',')
 shots = scores.map do |s|
   if s == 'X'
-    NUMBER_OF_PINS_STRIKE
+    TOTAL_PINS
   else
     s.to_i
   end
@@ -26,11 +25,11 @@ second_pitch_skip = false
     break
   end
   # ストライク、スペア、オープンフレームの3通りの計算方法を判断
-  if shots[i] == NUMBER_OF_PINS_STRIKE
+  if shots[i] == TOTAL_PINS
     # ストライク
     points += shots[i] + shots[i + 1] + shots[i + 2]
     second_pitch_skip = false
-  elsif shots[i] + shots[i + 1] == NUMBER_OF_PINS_SPARE
+  elsif shots[i] + shots[i + 1] == TOTAL_PINS
     # スペア
     points += shots[i] + shots[i + 1] + shots[i + 2]
     second_pitch_skip = true
