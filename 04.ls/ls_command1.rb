@@ -8,13 +8,12 @@ SPACE = 2
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
 def retrieve_flie_names(flie_names)
-  flie_names = flie_names.map do |flie_name|
+  flie_names.map do |flie_name|
     one_byte_char = flie_name.scan(/[!-~]/).size
     tow_byte_char = flie_name.scan(/[ぁ-んァ-ヶー\p{Han}]/).size
     total_byte = one_byte_char + tow_byte_char * 2
     {name: flie_name, bytes: total_byte, tow_byte_char:}
   end
-  flie_names
 end
 
 # ファイルの表示
