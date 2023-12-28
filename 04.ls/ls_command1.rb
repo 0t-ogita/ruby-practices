@@ -1,10 +1,18 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
+
 # 表示する列数の指定
 COLUMN = 3
 
 # 列間のスペース数の指定
 SPACE = 2
+
+# オプションの設定
+opt = OptionParser.new
+params = {}
+opt.on('-a') { |v| params[:a] = v }
+opt.parse!(ARGV)
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
 def retrieve_flie_names(flie_names)
@@ -12,7 +20,7 @@ def retrieve_flie_names(flie_names)
     one_byte_char = flie_name.scan(/[!-~]/).size
     tow_byte_char = flie_name.scan(/[ぁ-んァ-ヶー\p{Han}]/).size
     total_byte = one_byte_char + tow_byte_char * 2
-    {name: flie_name, bytes: total_byte, tow_byte_char:}
+    { name: flie_name, bytes: total_byte, tow_byte_char: }
   end
 end
 
@@ -26,8 +34,11 @@ def show_flie_names(flie_names, column, max_bytes)
   end
 end
 
-# カレントディレクトリのファイル名を取得
-directory_flie_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }
+directory_flie_names = if params[:a] == true
+                         Dir.glob('*', File::FNM_DOTMATCH).sort_by { |s| [s.downcase, s] }
+                       else
+                         Dir.glob('*').sort_by { |s| [s.downcase, s] }
+                       end
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
 flie_names = retrieve_flie_names(directory_flie_names)
