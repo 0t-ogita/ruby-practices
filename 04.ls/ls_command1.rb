@@ -34,11 +34,13 @@ def show_flie_names(flie_names, column, max_bytes)
   end
 end
 
-directory_flie_names = if params[:a] == true
-                         Dir.glob('*', File::FNM_DOTMATCH).sort_by { |s| [s.downcase, s] }
-                       else
-                         Dir.glob('*').sort_by { |s| [s.downcase, s] }
-                       end
+dot_match = if params[:a] == true
+              File::FNM_DOTMATCH
+            else
+              0
+            end
+
+directory_flie_names = Dir.glob('*', dot_match).sort_by { |s| [s.downcase, s] }
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
 flie_names = retrieve_flie_names(directory_flie_names)
