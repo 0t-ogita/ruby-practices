@@ -34,11 +34,7 @@ def show_flie_names(flie_names, column, max_bytes)
   end
 end
 
-flags = if params[:a] == true
-              File::FNM_DOTMATCH
-            else
-              0
-            end
+flags = params[:a] ? File::FNM_DOTMATCH : 0
 
 directory_flie_names = Dir.glob('*', flags).sort_by { |s| [s.downcase, s] }
 
