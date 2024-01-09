@@ -15,20 +15,20 @@ opt.on('-r') { |v| params[:r] = v }
 opt.parse!(ARGV)
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
-def retrieve_flie_names(flie_names)
-  flie_names.map do |flie_name|
-    one_byte_char = flie_name.scan(/[!-~]/).size
-    tow_byte_char = flie_name.scan(/[ぁ-んァ-ヶー\p{Han}]/).size
+def retrieve_file_names(file_names)
+  file_names.map do |file_name|
+    one_byte_char = file_name.scan(/[!-~]/).size
+    tow_byte_char = file_name.scan(/[ぁ-んァ-ヶー\p{Han}]/).size
     total_byte = one_byte_char + tow_byte_char * 2
-    { name: flie_name, bytes: total_byte, tow_byte_char: }
+    { name: file_name, bytes: total_byte, tow_byte_char: }
   end
 end
 
 # ファイルの表示
-def show_flie_names(flie_names, column, max_bytes)
-  flie_names[0].size.times do |i|
+def show_file_names(file_names, column, max_bytes)
+  file_names[0].size.times do |i|
     column.times do |j|
-      print flie_names[j][i][:name].ljust(max_bytes - flie_names[j][i][:tow_byte_char]) if !flie_names[j][i].nil?
+      print file_names[j][i][:name].ljust(max_bytes - file_names[j][i][:tow_byte_char]) if !file_names[j][i].nil?
     end
     print "\n"
   end
@@ -36,16 +36,16 @@ end
 
 method = params[:r] ? :reverse : :each
 
-directory_flie_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }.method(method)
+directory_file_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }.method(method)
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
-flie_names = retrieve_flie_names(directory_flie_names.call)
+file_names = retrieve_file_names(directory_file_names.call)
 
 # bytes が最大値の要素を取得
-max_bytes_hash = flie_names.max_by { |file_name| file_name[:bytes] }
+max_bytes_hash = file_names.max_by { |file_name| file_name[:bytes] }
 
 # 指定した配列数に分割
-split_flie_names = flie_names.each_slice((directory_flie_names.call.size.to_f / COLUMN).ceil).to_a
+split_file_names = file_names.each_slice((directory_file_names.call.size.to_f / COLUMN).ceil).to_a
 
 # ファイルの表示
-show_flie_names(split_flie_names, COLUMN, max_bytes_hash[:bytes] + SPACE)
+show_file_names(split_file_names, COLUMN, max_bytes_hash[:bytes] + SPACE)
