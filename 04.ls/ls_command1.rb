@@ -11,7 +11,7 @@ SPACE = 2
 # オプションの設定
 opt = OptionParser.new
 params = {}
-opt.on('-a') { |v| params[:a] = v }
+opt.on('-r') { |v| params[:r] = v }
 opt.parse!(ARGV)
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
@@ -34,18 +34,18 @@ def show_flie_names(flie_names, column, max_bytes)
   end
 end
 
-flags = params[:a] ? File::FNM_DOTMATCH : 0
+method = params[:r] ? :reverse : :each
 
-directory_flie_names = Dir.glob('*', flags).sort_by { |s| [s.downcase, s] }
+directory_flie_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }.method(method)
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
-flie_names = retrieve_flie_names(directory_flie_names)
+flie_names = retrieve_flie_names(directory_flie_names.call)
 
 # bytes が最大値の要素を取得
 max_bytes_hash = flie_names.max_by { |file_name| file_name[:bytes] }
 
 # 指定した配列数に分割
-split_flie_names = flie_names.each_slice((directory_flie_names.size.to_f / COLUMN).ceil).to_a
+split_flie_names = flie_names.each_slice((directory_flie_names.call.size.to_f / COLUMN).ceil).to_a
 
 # ファイルの表示
 show_flie_names(split_flie_names, COLUMN, max_bytes_hash[:bytes] + SPACE)
