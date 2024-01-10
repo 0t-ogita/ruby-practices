@@ -34,18 +34,18 @@ def show_file_names(file_names, column, max_bytes)
   end
 end
 
-method = params[:r] ? :reverse : :each
+directory_file_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }
 
-directory_file_names = Dir.glob('*').sort_by { |s| [s.downcase, s] }.method(method)
+directory_file_names = directory_file_names.reverse if params[:r]
 
 # ファイル名、ファイル名のバイト数、ファイルに含まれる全角の文字数取得
-file_names = retrieve_file_names(directory_file_names.call)
+file_names = retrieve_file_names(directory_file_names)
 
 # bytes が最大値の要素を取得
 max_bytes_hash = file_names.max_by { |file_name| file_name[:bytes] }
 
 # 指定した配列数に分割
-split_file_names = file_names.each_slice((directory_file_names.call.size.to_f / COLUMN).ceil).to_a
+split_file_names = file_names.each_slice((directory_file_names.size.to_f / COLUMN).ceil).to_a
 
 # ファイルの表示
 show_file_names(split_file_names, COLUMN, max_bytes_hash[:bytes] + SPACE)
