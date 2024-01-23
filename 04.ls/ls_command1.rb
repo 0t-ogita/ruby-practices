@@ -40,12 +40,21 @@ opt.parse!(ARGV)
 def rewrite_special_permissions(special, permissions)
   case special
   when 4
-    permissions[0] = permissions[0][-1] == 'x' ? permissions[0].gsub(/.$/, 's') : permissions[0].gsub(/.$/, 'S')
+    index = 0
+    upper_case_letter = 'S'
+    lower_case_letter = 's'
   when 2
-    permissions[1] = permissions[1][-1] == 'x' ? permissions[1].gsub(/.$/, 's') : permissions[1].gsub(/.$/, 'S')
+    index = 1
+    upper_case_letter = 'S'
+    lower_case_letter = 's'
   when 1
-    permissions[2] = permissions[2][-1] == 'x' ? permissions[2].gsub(/.$/, 't') : permissions[2].gsub(/.$/, 'T')
+    index = 2
+    upper_case_letter = 'T'
+    lower_case_letter = 't'
+  else
+    return permissions
   end
+  permissions[index] = permissions[index][-1] == 'x' ? permissions[index].gsub(/.$/, lower_case_letter) : permissions[index].gsub(/.$/, upper_case_letter)
   permissions
 end
 
@@ -53,7 +62,7 @@ end
 def rewrite_permission(file_mode)
   special_permissions = file_mode.slice(-4).to_i
 
-  file_permissions = file_mode.slice(-3..-1).split(//).map { |i| PERMISSIONS[i] }
+  file_permissions = file_mode.slice(-3..-1).chars.map { |i| PERMISSIONS[i] }
 
   rewrite_special_permissions(special_permissions, file_permissions).join
 end
@@ -92,14 +101,13 @@ def align_output_byte(file_statuses)
   uid_byte       = 0
   gid_byte       = 0
   size_byte      = 0
-  blocks = []
 
-  file_statuses.each do |hash|
+  blocks = file_statuses.map do |hash|
     hard_link_byte = hash[:hard_link].to_s.length if hash[:hard_link].to_s.length > hard_link_byte
     uid_byte = hash[:uid].length if hash[:uid].length > uid_byte
     gid_byte = hash[:gid].length if hash[:gid].length > gid_byte
     size_byte = hash[:size].to_s.length if hash[:size].to_s.length > size_byte
-    blocks.push(hash[:blocks])
+    hash[:blocks]
   end
 
   { hard_link_byte:, uid_byte:, gid_byte:, size_byte:, blocks: }
